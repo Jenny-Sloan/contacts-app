@@ -3,26 +3,32 @@ import { navigate } from '@reach/router'
 import Form from './Form'
 
 const getContact = async id =>
-  fetch('http://localhost:3000/' + id, {
+  fetch('https://guarded-hamlet-40615.herokuapp.com/' + id, {
     method: 'GET',
   }).then(res => res.json())
 
 
 export default props => {
-  const [contact, setContact] = useState({})
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [emailAddress, setEmailAddress] = useState('')
 
   useEffect(() => {
-    getContact(props.id).then(contact => setContact(contact))
+    getContact(props.id).then(contact => {
+      setFirstName(contact.firstName)
+      setLastName(contact.lastName)
+      setEmailAddress(contact.emailAddress)
+    })
   }, [props.id])
+
 
   return (
     <Form
-      editContact={contact}
-      onCreate={async contact => {
-        console.log(contact)
-        await fetch('http://localhost:3000', {
+    editContact={{firstName, lastName, emailAddress}}  
+    onCreate={async contact => {
+        await fetch('https://guarded-hamlet-40615.herokuapp.com/' + props.id, {
           method: 'PUT',
-          body: JSON.stringify(contact),
+          body: JSON.stringify(contact)
         })
         navigate('/')
       }}
